@@ -31,10 +31,13 @@ This guide contains full instructions on how to install Rock Band Blitz Deluxe f
 # Features
 
 ## Quality of Life
-* 
+* Faster Boot Time
+* Faster "Discovering DLC" at Boot
+* Offline Powerups
+* Fine Tune Calibration to 1MS 
 
 ## Additional Modifications
-* 
+*  Coming Soon!
 
 # What You'll Need
 
@@ -47,20 +50,23 @@ This guide contains full instructions on how to install Rock Band Blitz Deluxe f
 # Downloads
 
 # How to Install
-
-### ***NOT FINAL, THIS WILL CHANGE, IDK HOW THIS IS GONNA WORK FOR NOW***
-
+*NOTE: Rock Band Blitz Deluxe on PS3/RPCS3 installs differently compared to the other Deluxe projects.*
 ## Installing on [RPCS3](https://rpcs3.net/) (Recommended for PC)
 
 * **Install your North American copy of Rock Band Blitz** through the emulator. The [**official RPCS3 site covers this nicely**](https://rpcs3.net/quickstart).
   * Remember, **you need to be running** ***NPUB30749***. RPCS3 will tell you this in the game selection GUI under the `Serial` column.
 
-* Download [**Rock Band Blitz Deluxe for PS3**]. 
-  * Extract the zip and **drag and drop the `.pkg` file on top of the main RPCS3 window** to install it. Select `Yes` to confirm.
+* Go to [Repo Setup (Advanced)](#repo-setup-advanced) and follow the steps to install the repo on your computer.
+
+* In the **NPUB30749** game folder, copy the **`main_ps3.hdr`** and **`main_ps3_0.ark`** to the repo folder `_build/_rebuild/ps3/gen`. 
+
+* In the **`windows_bats`**, run **`build_ps3`**.
+
+* Copy the files & folders inside **`_build/ps3`** to your **NPUB30749** game folder.
 
 ***Rock Band Blitz Deluxe is now installed!*** We highly recommend you check out [**Optional Upgrades**](#optional-upgrades) for songs and other cool stuff you can add to your game.
 
-**To update Rock Band Blitz Deluxe**, [**re-download it**] and repeat the above steps. You can click the `Watch` button (All Activity) to be notified about any updates that occur.
+**To update Rock Band Blitz Deluxe**, repeat the above steps. You can click the `Watch` button (All Activity) to be notified about any updates that occur.
 
 ***Sidenote:*** *we recommend* ***enabling `Write Color Buffers`*** *for Rock Band Blitz to prevent any character model issues.*
 
@@ -74,13 +80,11 @@ This guide contains full instructions on how to install Rock Band Blitz Deluxe f
 
 **NOTE: Rock Band Blitz Deluxe only works with** ***North American (`NPUB30749`)*** **copies of the game on PS3.**
 
-* Download [**Rock Band Blitz Deluxe for PS3**]. 
-  * Extract the zip and copy the `.pkg` file to the root of a FAT32 formatted USB drive.
-  * Navigate to `Package Manager` and install it like any other package.
+**WIP - COMING SOON**
 
 ***Rock Band Blitz Deluxe is now installed!*** We highly recommend you check out [**Optional Upgrades**](#optional-upgrades) for songs and other cool stuff you can add to your game.
 
-**To update Rock Band Blitz Deluxe**, [**re-download it**] and repeat the above steps. You can click the `Watch` button (All Activity) to be notified about any updates that occur.
+**To update Rock Band Blitz Deluxe**, repeat the above steps. You can click the `Watch` button (All Activity) to be notified about any updates that occur.
 
 ## Installing on Xbox 360
 
@@ -205,7 +209,7 @@ You can also use [**Onyx Music Game Toolkit**](https://github.com/mtolly/onyxite
 
 ### Initializing the Repo
 
-* Go to the **[Releases](https://github.com/hmxmilohax/rock-band-3-deluxe/releases)** of this repo and **download `_init_repo.bat`** if you're on Windows or **`_init_repo.sh`** if you're on Linux.
+* Go to the **[Releases](https://github.com/hmxmilohax/rock-band-blitz-deluxe/releases)** of this repo and **download `_init_repo.bat`** if you're on Windows or **`_init_repo.sh`** if you're on Linux.
   * Make a new **empty** folder, **put `_init_repo` in the folder, and run it**. This will pull the repo down for you and make sure you're completely up to date. **This will take some time.**
 
 ### ***The folder should look like this once it's done:***

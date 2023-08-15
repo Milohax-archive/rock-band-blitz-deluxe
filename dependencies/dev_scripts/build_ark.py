@@ -3,8 +3,8 @@ from pathlib import Path
 from subprocess import CalledProcessError
 from sys import platform
 import subprocess
-import os
 from check_git_updated import check_git_updated
+import os
 
 def rm_tree(pth):
     pth = Path(pth)
@@ -16,16 +16,27 @@ def rm_tree(pth):
     pth.rmdir()
 
 def make_executable_binaries():
-    cmd_chmod_arkhelper = "chmod +x dependencies/linux/arkhelper".split()
-    subprocess.check_output(cmd_chmod_arkhelper, shell=(platform == "win32"), cwd="..")
-    cmd_chmod_dtab = "chmod +x dependencies/linux/dtab".split()
-    subprocess.check_output(cmd_chmod_dtab, shell=(platform == "win32"), cwd="..")
+    # Make the binaries executable if on a non-Windows platform
+    if platform != "win32":
+        try:
+            cmd_chmod_arkhelper = ["chmod", "+x", "dependencies/linux/arkhelper"]
+            subprocess.check_output(cmd_chmod_arkhelper, cwd="..")
+        except subprocess.CalledProcessError:
+            print("Failed to make arkhelper executable.")
+            sys.exit(1)
+
+        try:
+            cmd_chmod_dtab = ["chmod", "+x", "dependencies/linux/dtab"]
+            subprocess.check_output(cmd_chmod_dtab, cwd="..")
+        except subprocess.CalledProcessError:
+            print("Failed to make dtab executable.")
+            sys.exit(1)
 
 # darwin: mac
 
 # if xbox is true, build the Xbox ARK
 # else, build the PS3 ARK
-def build_patch_ark(xbox: bool):
+def build_patch_ark(xbox: bool, rpcs3_directory: str = None, rpcs3_mode: bool = False):
     # directories used in this script
     print("Building Rock Band Blitz Deluxe patch arks...")
     cwd = Path().absolute() # current working directory (dev_scripts)
@@ -33,18 +44,33 @@ def build_patch_ark(xbox: bool):
     ark_dir = root_dir.joinpath("_ark")
 
     files_to_remove = "*_ps3" if xbox else "*_xbox"
-    if platform == "win32":
-        build_location = "_build\\xbox\gen" if xbox else "_build\ps3\\USRDIR\gen"
+    if rpcs3_mode:
+        if platform == "win32":
+            build_location = rpcs3_directory + "\\game\\NPUB30749\\USRDIR"
+            eboot_location = "_build\_rebuild\ps3"
+            hdr_location = "_build\_rebuild\ps3\gen"
+        else:
+            build_location = rpcs3_directory + "/game/NPUB30749/USRDIR/gen"
+            eboot_location = "_build/_rebuild/ps3/"
+            hdr_location = "_build/_rebuild/ps3/gen"
     else:
-        build_location = "_build/xbox/gen" if xbox else "_build/ps3/USRDIR/gen"
+        if platform == "win32":
+            build_location = "_build\\xbox\gen" if xbox else "_build\\ps3\\USRDIR"
+            eboot_location = "_build\_rebuild\ps3"
+            hdr_location = "_build\_rebuild\ps3\gen"
+        else:
+            build_location = "_build/xbox/gen" if xbox else "_build/build/ps3/USRDIR"
+            eboot_location = "_build/_rebuild/ps3/"
+            hdr_location = "_build/_rebuild/ps3/gen"
+
         # build the binaries if on linux/other OS
         if platform != "darwin":
             make_executable_binaries()
     patch_hdr_version = "patch_xbox" if xbox else "patch_ps3"
 
-    # pull the latest changes from the Rock Band 3 Deluxe repo if necessary
-    if not check_git_updated(repo_url="https://github.com/hmxmilohax/rock-band-blitz-deluxe", repo_root_path=root_dir):
-        cmd_pull = "git pull https://github.com/hmxmilohax/rock-band-blitz-deluxe main".split()
+     pull the latest changes from the Rock Band Blitz Deluxe repo if necessary
+     if not check_git_updated(repo_url="https://github.com/hmxmilohax/rock-band-blitz-deluxe", repo_root_path=root_dir):
+        cmd_pull = "git pull https://github.com/hmxmilohax/rock-band-blitz-deluxe".split()
         subprocess.run(cmd_pull, shell=(platform == "win32"), cwd="..")
 
     # temporarily move other console's files out of the ark to reduce overall size
@@ -55,20 +81,33 @@ def build_patch_ark(xbox: bool):
         the_new_filename.parent.mkdir(parents=True, exist_ok=True)
         # print(f"moving file {temp_path} to {the_new_filename}")
         f.rename(the_new_filename)
-
+    
     # build the ark
     failed = False
-    try:
-        if platform == "win32":
-            cmd_build = f"dependencies\windows\\arkhelper.exe dir2ark _ark {build_location} -n {patch_hdr_version} -e -v 6".split()
-        elif platform == "darwin":
-            cmd_build = f"dependencies/macos/arkhelper dir2ark _ark {build_location} -n {patch_hdr_version} -e -v 6".split()
-        else:
-            cmd_build = f"dependencies/linux/arkhelper dir2ark _ark {build_location} -n {patch_hdr_version} -e -v 6".split()
-        subprocess.check_output(cmd_build, shell=(platform == "win32"), cwd="..")
-    except CalledProcessError as e:
-        print(e.output)
-        failed = True
+    if xbox:
+        try:
+            if platform == "win32":
+                cmd_build = f"dependencies\windows\\arkhelper.exe dir2ark _ark {build_location} -n {patch_hdr_version} -e -v 6".split()
+            elif platform == "darwin":
+                cmd_build = f"dependencies/macos/arkhelper dir2ark _ark {build_location} -n {patch_hdr_version} -e -v 6".split()
+            else:
+                cmd_build = f"dependencies/linux/arkhelper dir2ark _ark {build_location} -n {patch_hdr_version} -e -v 6".split()
+            subprocess.check_output(cmd_build, shell=(platform == "win32"), cwd="..")
+        except CalledProcessError as e:
+            print(e.output)
+            failed = True
+    else:
+        try:
+            if platform == "win32":
+                cmd_build = f"dependencies\windows\\arkhelper.exe patchcreator -a _ark -o {build_location} {hdr_location}\main_ps3.hdr {eboot_location}\EBOOT.BIN".split()
+            elif platform == "darwin":
+                cmd_build = f"dependencies/macos/arkhelper patchcreator -a _ark -o {build_location} {hdr_location}\main_ps3.hdr {eboot_location}\EBOOT.BIN".split()
+            else:
+                cmd_build = f"dependencies/linux/arkhelper patchcreator -a _ark -o {build_location} {hdr_location}\main_ps3.hdr {eboot_location}\EBOOT.BIN".split()
+            subprocess.check_output(cmd_build, shell=(platform == "win32"), cwd="..")
+        except CalledProcessError as e:
+            print(e.output)
+            failed = True   
 
     # move the other console's files back
     for g in root_dir.joinpath("_tmp").rglob(files_to_remove):

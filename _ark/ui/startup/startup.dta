@@ -1,0 +1,9 @@
+(wait_for_splash TRUE)
+(splash_order ;removes ESRB logo
+   ;#ifdef REGION_NA
+   ;(ui/startup/hmx_logo_screen.milo 5)
+   ;(ui/startup/esrb.milo 5)
+   ;#else
+   (ui/startup/hmx_logo_screen.milo 1);changed time for Milohax logo to stay on screen - vanilla is 5
+   ;#endif
+   )

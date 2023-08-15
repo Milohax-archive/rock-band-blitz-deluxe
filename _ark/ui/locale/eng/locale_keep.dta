@@ -1,3 +1,4 @@
+#include locale_updates_keep.dta
 #ifdef HX_XBOX
 (achievements_unavailable
    "You must log in to view your Achievements.")
@@ -1776,4 +1777,5 @@
    "Use the following webcode to link your account with Rock Band World on Facebook. Once you link, you'll gain access to many cool Rock Band World features, including seeing your Facebook friends' scores in-game.")
 (world
    "World")
-#include locale_updates_keep.dta
+(server_connect_welcome
+   "Welcome to Blitz Deluxe!")

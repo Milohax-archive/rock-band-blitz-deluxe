@@ -37,8 +37,8 @@
 (objects
    #include objects.dta)
 (song_mgr
-   (alt_dirs
-      ("songs_download"))
+   ;(alt_dirs ; Removal speeds up loading as this dir is never used
+      ;("songs_download")) 
    (max_song_count 8000)
    (ignore_range)
    (ignore_fake_in_song_list TRUE))
